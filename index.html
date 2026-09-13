@@ -417,14 +417,23 @@ ul{margin:0; padding:0; list-style:none;}
 .ctx-bottom::after{content:''; position:absolute; top:-1.15rem; left:50%; width:2px; height:1.15rem; background:rgba(255,255,255,.25); transform:translateX(-50%);}
 .ctx-left::after{content:''; position:absolute; right:-1rem; top:50%; height:2px; width:1rem; background:rgba(255,255,255,.25); transform:translateY(-50%);}
 .ctx-right::after{content:''; position:absolute; left:-1rem; top:50%; height:2px; width:1rem; background:rgba(255,255,255,.25); transform:translateY(-50%);}
+.ctx-card{
+  position:absolute; font-family:var(--font-mono); font-size:.66rem; font-weight:700;
+  color:#7fe8d4; background:var(--ink); padding:.1rem .35rem; border-radius:4px; white-space:nowrap;
+}
+.ctx-top .ctx-card{bottom:-1.05rem; left:50%; transform:translate(-50%,0);}
+.ctx-bottom .ctx-card{top:-1.05rem; left:50%; transform:translate(-50%,0);}
+.ctx-left .ctx-card{right:-.85rem; top:50%; transform:translate(45%,-50%);}
+.ctx-right .ctx-card{left:-.85rem; top:50%; transform:translate(-45%,-50%);}
+@media (max-width:900px){.ctx-top::after,.ctx-bottom::after,.ctx-left::after,.ctx-right::after{display:none;} .ctx-card{display:none;}}
 .ctx-core{
   background:linear-gradient(135deg,var(--teal-deep),var(--teal));
   color:#fff; border-radius:14px; padding:1.6rem 2rem; text-align:center;
   font-family:var(--font-display); font-weight:600; font-size:1.02rem;
   min-width:220px; box-shadow:0 18px 40px -14px rgba(23,168,147,.55);
+  grid-column:2; grid-row:2;
 }
 .ctx-core span{display:block; font-family:var(--font-mono); font-weight:400; font-size:.68rem; color:#d6fff5; margin-top:.4rem;}
-@media (max-width:900px){.ctx-top::after,.ctx-bottom::after,.ctx-left::after,.ctx-right::after{display:none;}}
 
 .arch-diagram{margin-top:2.2rem; display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; align-items:stretch;}
 .arch-box{border-radius:12px; padding:1.4rem; position:relative;}
@@ -768,7 +777,7 @@ ul{margin:0; padding:0; list-style:none;}
       <p class="institution reveal">RÉPUBLIQUE ALGÉRIENNE DÉMOCRATIQUE ET POPULAIRE<br>
       Université Mouloud Mammeri de Tizi-Ouzou — Faculté de Génie Électrique et Informatique<br>
       Mémoire de fin d'études · Master en Informatique — Ingénierie des Systèmes d'Information</p>
-      <h1 class="reveal">Développement d'une application web pour la gestion de la<br>pharmacie du Service d'<span style="color:var(--teal);">Oncologie Médicale Adulte</span> du <span style="color:var(--teal);">CLCC-DBK</span></h1>
+      <h1 class="reveal">Développement d'une application web pour la gestion de la pharmacie<br>du Service d'Oncologie Médicale Adulte du CLCC-DBK</h1>
       <p class="theme-line reveal">Calcul automatique des doses de chimiothérapie et détection d'anomalies par intelligence artificielle.</p>
       <div class="meta reveal">
         <div><span>Réalisé par</span>AMIRAT Fouad</div>
@@ -849,7 +858,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" data-title="Introduction générale">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Introduction générale</p>
-      <h1 class="h1 reveal" style="color:#fff; white-space:nowrap; font-size:clamp(1.4rem,2.3vw,2.05rem);">Poser le contexte, la <span style="color:var(--teal);">problématique</span> et la trame du mémoire</h1>
+      <h1 class="h1 reveal" style="color:#fff; white-space:nowrap; font-size:clamp(1.4rem,2.3vw,2.05rem);">Poser le contexte, la problématique et la trame du mémoire</h1>
       <p class="lede reveal" style="max-width:70ch;">Avant d'entrer dans le détail des quatre chapitres, cette introduction générale situe le sujet : la place des technologies de l'information en santé, la situation propre au CLCC-DBK, et la problématique qui a guidé l'ensemble de ce travail.</p>
       <div class="goal-steps">
         <div class="goal-step build-step">
@@ -876,7 +885,7 @@ ul{margin:0; padding:0; list-style:none;}
     <div class="slide-inner grid grid-2" style="align-items:center; gap:3rem;">
       <div>
         <p class="kicker reveal"><span class="dot"></span>Introduction générale</p>
-        <h1 class="h1 reveal">Le cancer, une prise en charge qui exige <span style="color:var(--teal);">précision</span> et <span style="color:var(--teal);">traçabilité</span></h1>
+        <h1 class="h1 reveal">Le cancer, une prise en charge qui exige précision et traçabilité</h1>
         <p class="lede reveal">Le cancer demeure l'une des principales causes de mortalité dans le monde. Sa prise en charge repose sur une chaîne thérapeutique exigeante où précision, sécurité et traçabilité sont essentielles.</p>
         <p class="lede reveal">À l'Unité Pharmaceutique Hospitalière du CLCC-DBK, la gestion des patients, prescriptions, stocks et dispensations repose encore largement sur des supports papier — ce qui complique la traçabilité et accroît le risque d'erreurs.</p>
       </div>
@@ -901,7 +910,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" id="chap1" data-title="Le cancer &amp; le circuit du médicament">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre I · Revue de littérature</p>
-      <h1 class="h1 reveal" style="">Du cancer au <span style="color:var(--teal);">circuit du médicament</span> en oncologie</h1>
+      <h1 class="h1 reveal" style="">Du cancer au circuit du médicament en oncologie</h1>
       <div class="grid grid-3" style="margin-top:1.8rem;">
         <div class="card build-step">
           <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div>
@@ -944,7 +953,7 @@ ul{margin:0; padding:0; list-style:none;}
     <div class="slide-inner grid grid-2" style="gap:3rem; align-items:center;">
       <div class="reveal">
         <p class="kicker"><span class="dot"></span>Chapitre I · Revue de littérature</p>
-        <h1 class="h1" style="color:#fff; ">Les <span style="color:var(--teal);">systèmes d'information</span> hospitaliers</h1>
+        <h1 class="h1" style="color:#fff; ">Les systèmes d'information hospitaliers</h1>
         <p class="lede">Un système d'information hospitalier (SIH) regroupe les ressources qui collectent, stockent et partagent les informations essentielles au fonctionnement d'un établissement de santé. Il optimise la gestion des activités médicales, administratives et pharmaceutiques, et favorise la circulation des données entre services.</p>
       </div>
       <div class="card build-step">
@@ -959,7 +968,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" data-title="Architecture en couches du SIH">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre I · Revue de littérature</p>
-      <h1 class="h1 reveal" style=""><span style="color:var(--teal);">Architecture en couches</span> du Système d'Information Hospitalier</h1>
+      <h1 class="h1 reveal" style="">Architecture en couches du Système d'Information Hospitalier</h1>
       <div class="layer-stack" style="max-width:820px;">
         <div class="layer-band build-step" style="background:var(--paper-2); border-color:var(--line);"><div class="layer-name" style="color:var(--ink);">Couche métier</div><div class="layer-desc" style="color:var(--slate);">Gère les étapes de prise en charge du patient</div></div>
         <div class="layer-band build-step" style="background:var(--paper-2); border-color:var(--line);"><div class="layer-name" style="color:var(--ink);">Couche fonction</div><div class="layer-desc" style="color:var(--slate);">Regroupe les informations nécessaires : dossiers patients, protocoles, stocks</div></div>
@@ -973,7 +982,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" data-title="Les modules d'un SIH">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre I · Revue de littérature</p>
-      <h1 class="h1 reveal" style="white-space:nowrap; font-size:clamp(1.3rem,2.15vw,1.95rem);">Les principaux <span style="color:var(--teal);">modules</span> d'un système d'information hospitalier</h1>
+      <h1 class="h1 reveal" style="white-space:nowrap; font-size:clamp(1.3rem,2.15vw,1.95rem);">Les principaux modules d'un système d'information hospitalier</h1>
       <div class="grid grid-4" style="margin-top:1.8rem;">
         <div class="card build-step"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21V7a2 2 0 0 1 2-2h6l6 6v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M12 5v6h6"/></svg></div><h3 style="font-size:.94rem;">Dossier patient</h3><p>Données administratives et médicales : identité, antécédents, résultats, traitements, historique</p></div>
         <div class="card build-step"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v5L4 19a1 1 0 0 0 1 2h14a1 1 0 0 0 1-2l-5-11V3"/><path d="M9 3h6M7 14h10"/></svg></div><h3 style="font-size:.94rem;">Laboratoire</h3><p>Gère les demandes et résultats d'analyses biologiques transmis au dossier patient</p></div>
@@ -993,7 +1002,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" data-title="État de l'art des solutions existantes">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre I · Revue de littérature</p>
-      <h1 class="h1 reveal" style="color:#fff; "><span style="color:var(--teal);">État de l'art</span> des solutions existantes</h1>
+      <h1 class="h1 reveal" style="color:#fff; ">État de l'art des solutions existantes</h1>
       <p class="lede reveal">Trois solutions ont été étudiées afin d'identifier leurs apports et leurs limites, et de guider la conception de la solution proposée.</p>
       <div class="grid grid-3" style="margin-top:1.6rem;">
         <div class="card build-step"><h3 style="color:#fff;">Chimio</h3><p>Logiciel de prescription et de préparation des chimiothérapies, largement utilisé en centres de cancérologie.</p></div>
@@ -1008,7 +1017,7 @@ ul{margin:0; padding:0; list-style:none;}
     <div class="slide-inner grid grid-2" style="gap:3rem; align-items:center;">
       <div class="reveal">
         <p class="kicker"><span class="dot"></span>Chapitre I · Revue de littérature</p>
-        <h1 class="h1" style=""><span style="color:var(--teal);">Sécurité des données médicales</span> &amp; cadre légal</h1>
+        <h1 class="h1" style="">Sécurité des données médicales &amp; cadre légal</h1>
         <p class="lede">Ce travail s'inscrit dans le respect du cadre légal algérien, notamment la loi n°18-07 relative à la protection des données à caractère personnel, en particulier les données de santé.</p>
       </div>
       <div class="card build-step" style="background:var(--ink); border-color:var(--ink);">
@@ -1028,7 +1037,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" id="chap2" data-title="Le CLCC-DBK &amp; l'Unité Pharmaceutique">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre II · Organisme d'accueil</p>
-      <h1 class="h1 reveal">Le <span style="color:var(--teal);">CLCC-DBK</span> &amp; l'Unité Pharmaceutique Hospitalière</h1>
+      <h1 class="h1 reveal">Le CLCC-DBK &amp; l'Unité Pharmaceutique Hospitalière</h1>
       <p class="lede reveal" style="max-width:76ch;">Établissement public hospitalier spécialisé dans la lutte contre le cancer, doté d'un service d'oncologie médicale adulte et d'une unité pharmaceutique hospitalière (UPH) dédiée à la gestion des traitements anticancéreux.</p>
       <div class="uph-flow" style="margin-top:2.2rem;">
         <div class="uph-step build-step">
@@ -1066,7 +1075,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" data-title="Un fonctionnement encore largement manuel">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre II · Étude de l'existant</p>
-      <h1 class="h1 reveal" style="">Un fonctionnement encore <span style="color:var(--teal);">largement manuel</span></h1>
+      <h1 class="h1 reveal" style="">Un fonctionnement encore largement manuel</h1>
       <p class="lede reveal">La gestion actuelle de la pharmacie hospitalière repose en grande partie sur des supports papier et des calculs manuels, ce qui engendre des contraintes organisationnelles, fonctionnelles et techniques.</p>
       <div class="grid grid-4" style="margin-top:1.8rem;">
         <div class="card card-warn build-step"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg></div><h3 style="font-size:.92rem;">Support papier</h3><p>Prescriptions, fiches de stock et registres tenus manuellement</p></div>
@@ -1082,7 +1091,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" data-title="Gap Analysis">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre II · Analyse des écarts</p>
-      <h1 class="h1 reveal" style="color:#fff; "><span style="color:var(--teal);">Gap Analysis</span> — situation actuelle vs. souhaitée</h1>
+      <h1 class="h1 reveal" style="color:#fff; ">Gap Analysis — situation actuelle vs. souhaitée</h1>
       <div class="gap-table build-step">
         <div class="gap-head"><div>Situation actuelle (CLCC-DBK)</div><div class="gap-arrow">→</div><div>Situation souhaitée (solution)</div></div>
         <div class="gap-row"><div class="gap-cell">Suivi des stocks manuel des lots et péremptions</div><div class="gap-arrow">→</div><div class="gap-cell">Suivi en temps réel + alertes automatiques (seuils, péremption &lt; 3 mois)</div></div>
@@ -1100,7 +1109,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" data-title="Problématique">
     <div class="slide-inner">
       <p class="kicker"><span class="dot"></span>Chapitre II · Étude de l'existant</p>
-      <h1 class="h1 reveal" style="color:#fff; "><span style="color:var(--teal);">Problématique</span></h1>
+      <h1 class="h1 reveal" style="color:#fff; ">Problématique</h1>
       <p class="lede reveal" style="max-width:68ch;">Le fonctionnement actuel de la pharmacie hospitalière présente plusieurs limites : manque d'automatisation, gestion manuelle des prescriptions, des médicaments anticancéreux, des stocks et de la traçabilité — ce qui rend la gestion peu efficace et ne répond plus aux exigences actuelles de qualité, de sécurité et de suivi des traitements.</p>
       <div class="card build-step" style="margin-top:1.4rem; max-width:68ch; background:rgba(23,168,147,.12); border-color:rgba(23,168,147,.4);">
         <p style="color:#fff; font-size:1.05rem; line-height:1.55; font-weight:500;">Comment mettre en place une solution intégrée permettant d'améliorer la gestion des médicaments anticancéreux, d'assurer une meilleure traçabilité et d'optimiser les processus de la pharmacie hospitalière ?</p>
@@ -1112,7 +1121,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" data-title="Proposition d'une solution">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre II · Proposition d'une solution</p>
-      <h1 class="h1 reveal" style="">Proposition d'une <span style="color:var(--teal);">solution</span></h1>
+      <h1 class="h1 reveal" style="">Proposition d'une solution</h1>
       <p class="lede reveal" style="max-width:70ch;">Pour pallier les insuffisances relevées, nous proposons de développer une application web dédiée à la gestion des médicaments anticancéreux, conçue pour répondre aux besoins spécifiques du service d'oncologie médicale adulte du CLCC-DBK. Elle vise à améliorer la gestion des prescriptions, des médicaments, des stocks et de la traçabilité, tout en simplifiant le travail des professionnels de santé.</p>
     </div>
   </section>
@@ -1121,7 +1130,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" data-title="Objectifs de la solution">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre II · Objectifs de notre solution</p>
-      <h1 class="h1 reveal" style=""><span style="color:var(--teal);">Objectifs</span> de la solution</h1>
+      <h1 class="h1 reveal" style="">Objectifs de la solution</h1>
       <div class="grid grid-6" style="margin-top:1.4rem;">
         <div class="card build-step"><h3 style="font-size:.85rem;">Automatiser</h3><p>Patients, prescriptions, médicaments, stocks, dispensations</p></div>
         <div class="card build-step"><h3 style="font-size:.85rem;">Fiabiliser</h3><p>Calcul automatique des doses de chimiothérapie</p></div>
@@ -1138,7 +1147,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" id="chap3" data-title="Démarche d'analyse et de conception">
     <div class="slide-inner">
       <p class="kicker"><span class="dot"></span>Chapitre III · Analyse &amp; conception</p>
-      <h1 class="h1 reveal" style="color:#fff; ">Démarche d'<span style="color:var(--teal);">analyse et de conception</span></h1>
+      <h1 class="h1 reveal" style="color:#fff; ">Démarche d'analyse et de conception</h1>
       <p class="lede reveal" style="max-width:66ch;">La modélisation UML de l'application s'est construite en quatre temps, afin de spécifier précisément le système avant sa réalisation :</p>
       <div class="grid grid-4" style="margin-top:1.6rem;">
         <div class="card build-step"><span class="pipe-num" style="display:inline-flex;">1</span><h3 style="margin-top:.7rem; font-size:.92rem;">Identifier les acteurs du système</h3></div>
@@ -1153,7 +1162,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" data-title="Les acteurs du système">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre III · Analyse &amp; conception</p>
-      <h1 class="h1 reveal" style="">Les <span style="color:var(--teal);">acteurs</span> du système</h1>
+      <h1 class="h1 reveal" style="">Les acteurs du système</h1>
       <div class="grid grid-4" style="margin-top:1.8rem;">
         <div class="card build-step"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Médecin</h3><p>Gère les dossiers patients, rédige les prescriptions de chimiothérapie, sélectionne protocole et méthode de calcul des doses.</p></div>
         <div class="card build-step"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v4a3 3 0 0 1-6 0V3Z"/><path d="M12 11v10M8 16h8"/></svg></div><h3>Pharmacien</h3><p>Acteur central : valide les prescriptions, gère lots et stocks, supervise la dispensation FIFO et la traçabilité.</p></div>
@@ -1169,7 +1178,7 @@ ul{margin:0; padding:0; list-style:none;}
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
           <p class="kicker" style="margin-bottom:.4rem;"><span class="dot"></span>Chapitre III · Modélisation UML</p>
-          <h1 class="h1" style="color:#fff; font-size:1.6rem; ">Diagramme de <span style="color:var(--teal);">cas d'utilisation</span> global</h1>
+          <h1 class="h1" style="color:#fff; font-size:1.6rem; ">Diagramme de cas d'utilisation global</h1>
           <p class="lede" style="margin-top:.5rem; font-size:.88rem; max-width:62ch;">Un diagramme de cas d'utilisation représente, de façon synthétique, les interactions entre les acteurs et le système : il modélise ce que le système doit faire, sans détailler comment.</p>
         </div>
         <span class="fig-tag">Figure 13 — mémoire, chap. III</span>
@@ -1184,14 +1193,14 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" data-title="Diagramme de contexte">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre III · Modélisation UML</p>
-      <h1 class="h1 reveal" style="color:#fff; ">Diagramme de <span style="color:var(--teal);">contexte</span></h1>
+      <h1 class="h1 reveal" style="color:#fff; ">Diagramme de contexte</h1>
       <p class="lede reveal">Le système et l'ensemble des acteurs qui interagissent avec lui, ainsi que les flux d'information échangés.</p>
       <div class="ctx-wrap build-step">
-        <div class="ctx-actor ctx-top"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>Médecin</div>
-        <div class="ctx-actor ctx-left"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6M9 5h6"/><rect x="6" y="8" width="12" height="13" rx="2"/></svg></div>Infirmier</div>
+        <div class="ctx-actor ctx-top"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>Médecin<span class="ctx-card">1..*</span></div>
+        <div class="ctx-actor ctx-left"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6M9 5h6"/><rect x="6" y="8" width="12" height="13" rx="2"/></svg></div>Infirmier<span class="ctx-card">1..*</span></div>
         <div class="ctx-core">Système de gestion de la pharmacie oncologique<span>CLCC-DBK</span></div>
-        <div class="ctx-actor ctx-right"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v4a3 3 0 0 1-6 0V3Z"/><path d="M12 11v10M8 16h8"/></svg></div>Pharmacien</div>
-        <div class="ctx-actor ctx-bottom"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M4 21c1-3.5 4-6 8-6s7 2.5 8 6"/></svg></div>Administrateur<span class="actor-sub">(Chef de service)</span></div>
+        <div class="ctx-actor ctx-right"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v4a3 3 0 0 1-6 0V3Z"/><path d="M12 11v10M8 16h8"/></svg></div>Pharmacien<span class="ctx-card">1..*</span></div>
+        <div class="ctx-actor ctx-bottom"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M4 21c1-3.5 4-6 8-6s7 2.5 8 6"/></svg></div>Administrateur<span class="actor-sub">(Chef de service)</span><span class="ctx-card">1</span></div>
       </div>
     </div>
   </section>
@@ -1202,10 +1211,11 @@ ul{margin:0; padding:0; list-style:none;}
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
           <p class="kicker" style="margin-bottom:.4rem;"><span class="dot"></span>Chapitre III · Modélisation UML</p>
-          <h1 class="h1" style="font-size:1.5rem; ">Diagramme de séquence — Ajouter un médicament avec <span style="color:var(--teal);">scan IA</span></h1>
+          <h1 class="h1" style="font-size:1.5rem; ">Diagramme de séquence — Ajouter un médicament avec scan IA</h1>
         </div>
         <span class="fig-tag">Figure 17 — mémoire, chap. III</span>
       </div>
+      <p class="lede reveal" style="margin-top:.4rem; font-size:.85rem; max-width:64ch;">Un diagramme de séquence représente l'enchaînement chronologique des messages échangés entre les objets du système pour réaliser un scénario donné.</p>
       <div class="diagram-frame build-step" style="margin-top:.9rem;">
         <img id="img-seq-scan-ia" alt="Diagramme de séquence, ajout d'un médicament avec scan IA" style="max-height:72vh;">
       </div>
@@ -1218,10 +1228,11 @@ ul{margin:0; padding:0; list-style:none;}
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
           <p class="kicker" style="margin-bottom:.4rem;"><span class="dot"></span>Chapitre III · Modélisation UML</p>
-          <h1 class="h1" style="font-size:1.6rem; ">Diagramme d'activité — Dispensation <span style="color:var(--teal);">FIFO</span></h1>
+          <h1 class="h1" style="font-size:1.6rem; ">Diagramme d'activité — Dispensation FIFO</h1>
         </div>
         <span class="fig-tag">Figure 25 — mémoire, chap. III</span>
       </div>
+      <p class="lede reveal" style="margin-top:.4rem; font-size:.85rem; max-width:64ch;">Un diagramme d'activité modélise le déroulement d'un processus étape par étape, avec ses embranchements et ses conditions.</p>
       <div class="diagram-frame build-step" style="margin-top:.9rem;">
         <img id="img-activite-fifo" alt="Diagramme d'activité, dispensation FIFO" style="max-height:74vh;">
       </div>
@@ -1234,10 +1245,11 @@ ul{margin:0; padding:0; list-style:none;}
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
           <p class="kicker" style="margin-bottom:.4rem;"><span class="dot"></span>Chapitre III · Modélisation UML</p>
-          <h1 class="h1" style="color:#fff; font-size:1.5rem; ">Diagramme de <span style="color:var(--teal);">classes</span></h1>
+          <h1 class="h1" style="color:#fff; font-size:1.5rem; ">Diagramme de classes</h1>
         </div>
         <span class="fig-tag">Figure 29 — mémoire, chap. III</span>
       </div>
+      <p class="lede reveal" style="margin-top:.4rem; font-size:.85rem; max-width:64ch;">Un diagramme de classes décrit la structure statique du système : les classes, leurs attributs, leurs méthodes et les relations qui les lient.</p>
       <div class="diagram-frame build-step" style="margin-top:.8rem;">
         <img id="img-classes" alt="Diagramme de classes" style="max-height:78vh;">
       </div>
@@ -1250,10 +1262,11 @@ ul{margin:0; padding:0; list-style:none;}
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
           <p class="kicker" style="margin-bottom:.4rem;"><span class="dot"></span>Chapitre III · Modélisation UML</p>
-          <h1 class="h1" style="font-size:1.6rem; ">Diagramme de composants — <span style="color:var(--teal);">Architecture logicielle</span></h1>
+          <h1 class="h1" style="font-size:1.6rem; ">Diagramme de composants — Architecture logicielle</h1>
         </div>
         <span class="fig-tag">Figure 30 — mémoire, chap. III</span>
       </div>
+      <p class="lede reveal" style="margin-top:.4rem; font-size:.85rem; max-width:64ch;">Un diagramme de composants montre comment le logiciel est découpé en modules et comment ces modules communiquent entre eux.</p>
       <div class="diagram-frame build-step" style="margin-top:1rem;">
         <img id="img-composants" alt="Diagramme de composants, architecture logicielle" style="max-height:64vh;">
       </div>
@@ -1267,10 +1280,11 @@ ul{margin:0; padding:0; list-style:none;}
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
           <p class="kicker" style="margin-bottom:.4rem;"><span class="dot"></span>Chapitre III · Modélisation UML</p>
-          <h1 class="h1" style="font-size:1.6rem; ">Diagramme d'état — <span style="color:var(--teal);">Cycle de vie</span> d'un médicament</h1>
+          <h1 class="h1" style="font-size:1.6rem; ">Diagramme d'état — Cycle de vie d'un médicament</h1>
         </div>
         <span class="fig-tag">Figure 32 — mémoire, chap. III</span>
       </div>
+      <p class="lede reveal" style="margin-top:.4rem; font-size:.85rem; max-width:64ch;">Un diagramme d'état représente les différents états qu'un objet peut prendre au cours de son cycle de vie, et les transitions qui le font passer d'un état à un autre.</p>
       <div class="diagram-frame build-step" style="margin-top:.9rem;">
         <img id="img-etat-medicament" alt="Diagramme d'état, cycle de vie d'un médicament" style="max-height:70vh;">
       </div>
@@ -1281,7 +1295,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" data-title="Sécurité — RBAC">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre III · Sécurité</p>
-      <h1 class="h1 reveal" style="color:#fff; ">Contrôle d'accès basé sur les rôles (<span style="color:var(--teal);">RBAC</span>)</h1>
+      <h1 class="h1 reveal" style="color:#fff; ">Contrôle d'accès basé sur les rôles (RBAC)</h1>
       <p class="lede reveal">Chaque rôle (administrateur, médecin, pharmacien, infirmier) reçoit des permissions dédiées. Les contrôleurs valident ces droits avant toute action sur la base de données — conformément à la loi n°18-07.</p>
       <div class="pipeline">
         <div class="pipe-step build-step"><div class="pipe-num">1</div><div><h4>Authentification (guard oncologie)</h4><p>Vérification des identifiants et de l'état du compte (verrouillage, session)</p></div></div>
@@ -1297,7 +1311,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" id="chap4" data-title="Langages, outils &amp; technologies">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre IV · Réalisation</p>
-      <h1 class="h1 reveal" style="color:#fff; ">Langages, outils &amp; <span style="color:var(--teal);">technologies</span></h1>
+      <h1 class="h1 reveal" style="color:#fff; ">Langages, outils &amp; technologies</h1>
       <p class="lede reveal">Survolez chaque catégorie pour découvrir le détail des langages, outils et technologies mobilisés pour développer l'application.</p>
       <div class="tech-orbit-wrap reveal">
         <svg class="tech-orbit-lines" viewBox="0 0 900 620" preserveAspectRatio="xMidYMid meet">
@@ -1336,7 +1350,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" data-title="Architecture logicielle">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre IV · Réalisation</p>
-      <h1 class="h1 reveal" style="color:#fff; "><span style="color:var(--teal);">Architecture logicielle</span></h1>
+      <h1 class="h1 reveal" style="color:#fff; ">Architecture logicielle</h1>
       <p class="lede reveal">L'application repose sur deux services séparés, qui communiquent en local.</p>
       <div class="arch-diagram">
         <div class="arch-box laravel build-step">
@@ -1358,7 +1372,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" data-title="Fonctionnalités clés">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre IV · Fonctionnalités</p>
-      <h1 class="h1 reveal" style="">Une gestion complète du <span style="color:var(--teal);">circuit pharmaceutique</span></h1>
+      <h1 class="h1 reveal" style="">Une gestion complète du circuit pharmaceutique</h1>
       <div class="grid grid-3" style="margin-top:1.6rem;">
         <div class="card build-step"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Gestion des patients</h3><p>Dossier patient (identité, âge, sexe, groupe sanguin, type de cancer, allergies) consulté à chaque prescription.</p></div>
         <div class="card build-step"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><h3>Gestion des médicaments</h3><p>Catalogue complet, saisie manuelle ou assistée par scan IA, cartes d'alerte visuelles (rupture, expiration).</p></div>
@@ -1375,7 +1389,7 @@ ul{margin:0; padding:0; list-style:none;}
     <div class="slide-inner grid grid-2" style="gap:3rem; align-items:start;">
       <div class="reveal">
         <p class="kicker"><span class="dot"></span>Chapitre IV · Calcul des doses</p>
-        <h1 class="h1" style="">Calcul automatique des <span style="color:var(--teal);">doses de chimiothérapie</span></h1>
+        <h1 class="h1" style="">Calcul automatique des doses de chimiothérapie</h1>
         <p class="lede">Dès la saisie du poids et de la taille, la surface corporelle est calculée en temps réel. La fonction rénale est estimée simultanément par deux méthodes complémentaires. Chaque médicament du protocole applique ensuite sa propre méthode de calcul : mg/kg, mg/m², dose fixe, ou la formule de Calvert pour le carboplatine.</p>
         <div class="grid" style="grid-template-columns:1fr; gap:.8rem; margin-top:1.2rem;">
           <div class="formula-card build-step">
@@ -1419,7 +1433,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" data-title="Module d'analyse intelligente">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre IV · Intelligence artificielle</p>
-      <h1 class="h1 reveal" style="color:#fff; ">L'<span style="color:var(--teal);">intelligence artificielle</span> au service du pharmacien</h1>
+      <h1 class="h1 reveal" style="color:#fff; ">L'intelligence artificielle au service du pharmacien</h1>
       <p class="lede reveal">Une image de médicament est prétraitée (OpenCV / Pillow : contraste CLAHE, débruitage, seuillage adaptatif, détection du flou) avant d'être analysée par plusieurs modèles complémentaires.</p>
       <div class="pipeline">
         <div class="pipe-step build-step"><div class="pipe-num">1</div><div><h4>Reconnaissance d'image — CLIP</h4><p>Identifie un médicament à partir de son apparence visuelle (photo de boîte ou d'étiquette)</p></div></div>
@@ -1436,7 +1450,7 @@ ul{margin:0; padding:0; list-style:none;}
     <div class="slide-inner grid grid-2" style="gap:3rem; align-items:center;">
       <div class="reveal">
         <p class="kicker"><span class="dot"></span>Chapitre IV · Analyse statistique</p>
-        <h1 class="h1" style=""><span style="color:var(--teal);">Détection d'anomalies</span> &amp; prévision des consommations</h1>
+        <h1 class="h1" style="">Détection d'anomalies &amp; prévision des consommations</h1>
         <p class="lede">Un mécanisme de détection basé sur la méthode statistique du Score-Z identifie automatiquement les valeurs anormalement élevées ou faibles par rapport aux consommations habituelles des médicaments. La prévision des tendances de consommation s'appuie sur la méthode Holt-Winters.</p>
       </div>
       <div class="card build-step" style="padding:1.6rem;">
@@ -1456,7 +1470,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" data-title="Démonstration vidéo">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Démonstration</p>
-      <h1 class="h1 reveal" style="color:#fff; ">L'application en <span style="color:var(--teal);">fonctionnement</span></h1>
+      <h1 class="h1 reveal" style="color:#fff; ">L'application en fonctionnement</h1>
       <p class="lede reveal">Vidéo de démonstration des fonctionnalités réelles de l'application, enregistrée sur l'environnement de travail.</p>
       <div class="video-frame reveal">
         <video id="demoVideo" controls playsinline poster="" style="display:none;"></video>
@@ -1479,7 +1493,7 @@ ul{margin:0; padding:0; list-style:none;}
     <div class="slide-inner grid grid-2" style="gap:3rem; align-items:center;">
       <div class="reveal">
         <p class="kicker"><span class="dot"></span>Chapitre IV · Installation &amp; déploiement</p>
-        <h1 class="h1" style="color:#fff; "><span style="color:var(--teal);">Déploiement</span> sur l'intranet du CLCC-DBK</h1>
+        <h1 class="h1" style="color:#fff; ">Déploiement sur l'intranet du CLCC-DBK</h1>
         <div class="grid" style="grid-template-columns:1fr; gap:.7rem; margin-top:1.2rem;">
           <div class="card build-step"><h3 style="font-size:.85rem;">Serveur dédié</h3><p>Adresse IP fixe sur le réseau local du CLCC-DBK</p></div>
           <div class="card build-step"><h3 style="font-size:.85rem;">Laravel en production</h3><p><code>composer install --no-dev</code>, migrations, cache config/routes</p></div>
@@ -1506,7 +1520,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" data-title="Accueil de la solution">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Bilan</p>
-      <h1 class="h1 reveal" style="">Une solution <span style="color:var(--teal);">bien accueillie</span> par le service</h1>
+      <h1 class="h1 reveal" style="">Une solution bien accueillie par le service</h1>
       <p class="lede reveal">L'application a été présentée aux membres du service d'oncologie médicale adulte, dont le chef de service, les médecins oncologues, les pharmaciens et le personnel infirmier.</p>
       <div class="grid grid-3" style="margin-top:1.6rem;">
         <div class="quote-card build-step">Répond efficacement aux besoins du service en simplifiant la gestion des tâches quotidiennes et en réduisant le travail manuel.<cite>Retour des utilisateurs — CLCC-DBK</cite></div>
@@ -1520,7 +1534,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide dark" data-title="Perspectives futures">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Conclusion générale</p>
-      <h1 class="h1 reveal" style="color:#fff; "><span style="color:var(--teal);">Perspectives futures</span></h1>
+      <h1 class="h1 reveal" style="color:#fff; ">Perspectives futures</h1>
       <div class="grid grid-3" style="margin-top:2rem;">
         <div class="card build-step" style="position:relative;">
           <span style="position:absolute; top:-11px; left:1.5rem; background:var(--ink); color:#7fe8d4; font-family:var(--font-mono); font-size:.66rem; font-weight:700; padding:.2rem .5rem; border-radius:20px; border:1px solid rgba(111,227,205,.4);">Étape 1</span>
@@ -1539,7 +1553,7 @@ ul{margin:0; padding:0; list-style:none;}
   <section class="slide light" data-title="Conclusion générale">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Conclusion générale</p>
-      <h1 class="h1 reveal" style=""><span style="color:var(--teal);">Bilan</span> du projet</h1>
+      <h1 class="h1 reveal" style="">Bilan du projet</h1>
       <p class="lede reveal" style="max-width:75ch; font-size:1.02rem;">Une application web complète de gestion de la pharmacie oncologique du CLCC-DBK : patients, prescriptions, médicaments, lots, stocks (FIFO), dispensations, calcul automatique des doses, reconnaissance IA (CLIP, OCR, code-barres) et contrôle d'accès par rôle (RBAC) — développée avec Laravel, MySQL et un microservice FastAPI dédié à l'intelligence artificielle.</p>
       <div class="grid grid-4" style="margin-top:1.6rem;">
         <div class="pill build-step" style="justify-content:center; padding:.6rem;">UML complet</div>
@@ -1557,7 +1571,7 @@ ul{margin:0; padding:0; list-style:none;}
     </div>
     <div class="slide-inner cover-content" style="text-align:left;">
       <p class="kicker reveal"><span class="dot"></span>Fin de la présentation</p>
-      <h1 class="reveal"><span style="color:var(--teal);">Merci</span> de votre attention</h1>
+      <h1 class="reveal">Merci de votre attention</h1>
       <p class="theme-line reveal">Place aux questions.</p>
       <div class="meta reveal">
         <div><span>AMIRAT Fouad</span>Master Ingénierie des Systèmes d'Information — UMMTO</div>
