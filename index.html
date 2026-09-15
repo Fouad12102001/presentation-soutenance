@@ -58,14 +58,15 @@ ul{margin:0; padding:0; list-style:none;}
 .slide{
   position:absolute;
   inset:0;
+  z-index:2;
   display:flex;
   flex-direction:column;
   justify-content:center;
   padding:clamp(1.6rem,4.4vw,4.8rem) clamp(1.6rem,7vw,7.5rem);
   opacity:0;
   visibility:hidden;
-  transform:translateY(22px);
-  transition:opacity .55s cubic-bezier(.22,.61,.36,1), transform .65s cubic-bezier(.22,.61,.36,1);
+  transform:translateY(26px) scale(.985);
+  transition:opacity .6s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1);
   overflow-y:auto;
   /* image de fond propre à chaque diapo (images/slideN.png), injectée par JS
      via la variable --slide-photo ; le dégradé de secours défini par
@@ -85,7 +86,7 @@ ul{margin:0; padding:0; list-style:none;}
 .slide.active{
   opacity:1;
   visibility:visible;
-  transform:translateY(0);
+  transform:translateY(0) scale(1);
   z-index:2;
 }
 .slide.light{
@@ -104,9 +105,15 @@ ul{margin:0; padding:0; list-style:none;}
 }
 .slide-inner{max-width:1360px; margin:0 auto; width:100%; position:relative; z-index:1;}
 
-/* entrance choreography for children of active slide */
-.reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
-.slide.active .reveal{opacity:1; transform:translateY(0);}
+/* entrance choreography for children of active slide — chaque diapo se voit
+   assigner une variante différente via data-anim (voir <section data-anim="...">)
+   afin de casser la répétition d'un même mouvement sur les 38 diapos. */
+.slide-inner{perspective:1200px;}
+.reveal{
+  opacity:0;
+  transition:opacity .65s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1), filter .6s ease;
+  will-change:transform, opacity, filter;
+}
 .slide.active .reveal:nth-child(1){transition-delay:.05s;}
 .slide.active .reveal:nth-child(2){transition-delay:.14s;}
 .slide.active .reveal:nth-child(3){transition-delay:.23s;}
@@ -116,8 +123,23 @@ ul{margin:0; padding:0; list-style:none;}
 .slide.active .reveal:nth-child(7){transition-delay:.59s;}
 .slide.active .reveal:nth-child(8){transition-delay:.68s;}
 
+/* --- variantes d'entrée (état masqué, avant apparition) --- */
+.slide[data-anim="fade-up"] .reveal{transform:translateY(20px);}
+.slide[data-anim="fade-down"] .reveal{transform:translateY(-20px);}
+.slide[data-anim="slide-left"] .reveal{transform:translateX(58px);}
+.slide[data-anim="slide-right"] .reveal{transform:translateX(-58px);}
+.slide[data-anim="scale-in"] .reveal{transform:scale(.9) translateY(8px);}
+.slide[data-anim="blur-in"] .reveal{transform:translateY(10px); filter:blur(9px);}
+.slide[data-anim="flip-in"] .reveal{transform:rotateX(-20deg) translateY(4px); transform-origin:50% 100%;}
+.slide[data-anim="zoom-rotate"] .reveal{transform:scale(.86) rotate(-3deg);}
+/* diapo sans variante déclarée : repli sur le mouvement historique */
+.slide:not([data-anim]) .reveal{transform:translateY(16px);}
+
+/* --- état révélé : toujours prioritaire sur la variante, quelle qu'elle soit --- */
+.slide.active .reveal{opacity:1; transform:none; filter:none;}
+
 @media (prefers-reduced-motion: reduce){
-  .slide, .reveal{transition:opacity .2s linear !important; transform:none !important;}
+  .slide, .reveal{transition:opacity .2s linear !important; transform:none !important; filter:none !important;}
 }
 
 /* =========================================================
@@ -134,7 +156,8 @@ ul{margin:0; padding:0; list-style:none;}
   gap:.55rem;
 }
 .slide.dark .kicker{color:#7fe8d4; text-shadow:0 1px 6px rgba(0,0,0,.55);}
-.kicker .dot{width:6px; height:6px; border-radius:50%; background:currentColor; flex:none;}
+.kicker .dot{width:6px; height:6px; border-radius:50%; background:currentColor; flex:none; box-shadow:0 0 0 0 currentColor; animation:dot-pulse 2.2s ease-in-out infinite;}
+@keyframes dot-pulse{0%{box-shadow:0 0 0 0 rgba(23,168,147,.5);} 70%{box-shadow:0 0 0 6px rgba(23,168,147,0);} 100%{box-shadow:0 0 0 0 rgba(23,168,147,0);}}
 .h1{
   font-size:clamp(1.85rem,3.4vw,2.95rem);
   line-height:1.16;
@@ -154,8 +177,8 @@ ul{margin:0; padding:0; list-style:none;}
 }
 /* état par défaut d'un élément .build-step (révélé pas-à-pas via advance()/retreat()) ;
    surchargé plus bas par des styles spécifiques (.card, .pill, .flow-step, .layer-band, .g...) */
-.build-step{opacity:0; transform:translateY(16px); transition:opacity .5s ease, transform .5s cubic-bezier(.22,.61,.36,1);}
-.build-step.is-in{opacity:1; transform:translateY(0);}
+.build-step{opacity:0; transform:translateY(16px) scale(.96); transition:opacity .55s ease, transform .55s cubic-bezier(.34,1.56,.64,1);}
+.build-step.is-in{opacity:1; transform:translateY(0) scale(1);}
 .slide.dark .lede{color:var(--slate-dark); text-shadow:0 1px 8px rgba(0,0,0,.5);}
 .badge-idx{
   font-family:var(--font-mono);
@@ -208,9 +231,12 @@ ul{margin:0; padding:0; list-style:none;}
   margin-bottom:.9rem;
   flex:none;
   box-shadow:inset 0 0 0 1px rgba(23,168,147,.18);
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease;
 }
 .slide.dark .icon-circle{background:linear-gradient(135deg, rgba(111,227,205,.22), rgba(111,227,205,.06)); color:#7fe8d4; box-shadow:inset 0 0 0 1px rgba(111,227,205,.22);}
 .icon-circle svg{width:22px; height:22px;}
+.card:hover .icon-circle, .uph-step:hover .icon-circle{transform:scale(1.12) rotate(-4deg); box-shadow:inset 0 0 0 1px rgba(23,168,147,.3), 0 0 0 6px rgba(23,168,147,.1);}
+.slide.dark .card:hover .icon-circle{box-shadow:inset 0 0 0 1px rgba(111,227,205,.35), 0 0 0 6px rgba(111,227,205,.12);}
 
 .pill{
   display:inline-flex; align-items:center; gap:.4rem;
@@ -475,7 +501,9 @@ ul{margin:0; padding:0; list-style:none;}
 .formula-card{
   background:#fff; border:1px solid var(--line); border-radius:var(--radius);
   padding:1.3rem 1.4rem;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
+.formula-card:hover{box-shadow:0 20px 40px -20px rgba(23,168,147,.3); border-color:rgba(23,168,147,.4);}
 .formula-card .name{font-weight:600; font-size:.92rem; margin-bottom:.4rem;}
 .formula-card .expr{
   font-family:var(--font-mono); font-size:.92rem; color:var(--teal-deep);
@@ -535,6 +563,7 @@ ul{margin:0; padding:0; list-style:none;}
 .quote-card{
   background:var(--ink-2); border-left:3px solid var(--teal); border-radius:0 10px 10px 0;
   padding:1.3rem 1.5rem; color:#dce8ef; font-size:.95rem; line-height:1.6;
+  transition:transform .25s ease, box-shadow .25s ease;
 }
 .quote-card cite{display:block; margin-top:.8rem; font-style:normal; font-family:var(--font-mono); font-size:.72rem; color:var(--slate-dark);}
 
@@ -542,7 +571,26 @@ ul{margin:0; padding:0; list-style:none;}
    CHROME: progress / controls / menu
 ========================================================= */
 .progress-track{position:fixed; top:0; left:0; width:100%; height:3px; background:rgba(255,255,255,.08); z-index:60;}
-.progress-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),#6fe3cd); transition:width .4s ease;}
+.progress-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--teal),#6fe3cd); transition:width .5s cubic-bezier(.22,.61,.36,1); position:relative;}
+.progress-tip{position:absolute; right:-3px; top:50%; width:8px; height:8px; border-radius:50%; background:#6fe3cd; transform:translateY(-50%); box-shadow:0 0 10px 3px rgba(111,227,205,.85); animation:tip-pulse 1.6s ease-in-out infinite;}
+@keyframes tip-pulse{0%,100%{opacity:1; transform:translateY(-50%) scale(1);} 50%{opacity:.55; transform:translateY(-50%) scale(1.6);}}
+
+/* halos lumineux ambiants, très discrets, animés en continu derrière le contenu */
+.ambient-glow{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+.ambient-glow .orb{position:absolute; border-radius:50%; filter:blur(70px); opacity:.16;}
+.orb-a{width:46vw; height:46vw; top:-14vw; right:-10vw; background:radial-gradient(circle, var(--teal) 0%, transparent 70%); animation:orb-float-a 22s ease-in-out infinite;}
+.orb-b{width:38vw; height:38vw; bottom:-12vw; left:-8vw; background:radial-gradient(circle, #2b6fd6 0%, transparent 70%); animation:orb-float-b 26s ease-in-out infinite;}
+@keyframes orb-float-a{0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-4vw,5vw) scale(1.12);}}
+@keyframes orb-float-b{0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(5vw,-4vw) scale(1.08);}}
+
+/* halo doux qui suit le curseur, visible uniquement sur diapos sombres */
+.cursor-spot{
+  position:fixed; z-index:1; pointer-events:none; width:520px; height:520px;
+  left:0; top:0; margin-left:-260px; margin-top:-260px; border-radius:50%;
+  background:radial-gradient(circle, rgba(23,168,147,.10) 0%, transparent 68%);
+  opacity:0; transition:opacity .4s ease; will-change:transform;
+}
+.cursor-spot.spot-visible{opacity:1;}
 
 .controls{
   position:fixed; bottom:0; left:0; width:100%; z-index:55;
@@ -651,8 +699,29 @@ ul{margin:0; padding:0; list-style:none;}
 /* =========================================================
    TECH ORBIT (interactive technologies schema)
 ========================================================= */
+
+/* =========================================================
+   TECH ORBIT — refonte 100% CSS, sans JS, incassable
+   Le conteneur garde exactement le ratio de la maquette
+   (900x620) via aspect-ratio ; il ne peut donc jamais
+   dépasser la hauteur disponible : max-height le limite,
+   et le navigateur calcule seul la largeur qui va avec.
+   Les nœuds sont placés en % (top/left), donc ils suivent
+   la mise à l'échelle automatiquement — plus aucun calcul
+   JS fragile.
+========================================================= */
 .tech-orbit-wrap{
-  position:relative; width:100%; max-width:900px; height:620px; margin:1.6rem auto 0;
+  position:relative;
+  /* Largeur calculée directement pour garantir un cercle parfait :
+     on convertit le budget de hauteur (58vh, plafonné à 560px) en
+     la largeur équivalente au ratio 900:620, puis on prend le plus
+     petit entre cette valeur, la largeur disponible et 900px.
+     aspect-ratio n'a alors plus qu'un seul axe à déduire : la
+     hauteur ne peut jamais être "coupée" indépendamment, donc le
+     cercle ne se déforme jamais, quelle que soit la fenêtre. */
+  width:min(100%, 900px, calc(min(58vh, 560px) * 900 / 620));
+  aspect-ratio:900/620;
+  margin:1.5rem auto 0;
 }
 .tech-orbit-lines{position:absolute; inset:0; width:100%; height:100%; overflow:visible;}
 .tech-orbit-lines line{
@@ -660,39 +729,71 @@ ul{margin:0; padding:0; list-style:none;}
   animation:dashFlow 6s linear infinite;
 }
 @keyframes dashFlow{to{stroke-dashoffset:-100;}}
+
+/* anneau pointillé fixe + arc lumineux qui tourne dans le sens des
+   aiguilles d'une montre pour matérialiser la lecture 1→2→3→4→5 */
+.orbit-ring{
+  fill:none; stroke:rgba(23,168,147,.22); stroke-width:1.5; stroke-dasharray:2 9;
+}
+.orbit-sweep{
+  fill:none; stroke:#7fe8d4; stroke-width:3; stroke-linecap:round;
+  stroke-dasharray:46 1651; /* petit arc visible + reste de la circonférence (2πr≈1696.5) */
+  filter:drop-shadow(0 0 6px rgba(127,232,212,.85));
+  animation:orbit-cw 7s linear infinite;
+}
+@keyframes orbit-cw{ to{ stroke-dashoffset:-1696.5; } }
+
 .tech-hub{
   position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:150px; height:150px; border-radius:50%;
+  width:16.6%; aspect-ratio:1/1; border-radius:50%;
   background:radial-gradient(circle at 35% 30%, var(--teal), var(--teal-deep));
   display:flex; align-items:center; justify-content:center; text-align:center;
-  color:#fff; font-family:var(--font-display); font-weight:600; font-size:.92rem; line-height:1.25;
+  color:#fff; font-family:var(--font-display); font-weight:600;
+  font-size:clamp(.72rem, 1.9vmin, .92rem); line-height:1.25;
   box-shadow:0 0 0 8px rgba(23,168,147,.12), 0 0 60px rgba(23,168,147,.45);
-  z-index:3; padding:.5rem;
+  z-index:3; padding:.4rem;
 }
+
 .tech-node{
-  position:absolute; top:50%; left:50%;
-  transform:translate(calc(-50% + var(--x)), calc(-50% + var(--y)));
-  width:230px; background:rgba(255,255,255,.045); border:1px solid var(--line-dark);
-  border-radius:12px; padding:.9rem 1rem; transition:transform .3s ease, background .3s ease, border-color .3s ease;
+  position:absolute;
+  top:var(--yp); left:var(--xp);
+  transform:translate(-50%,-50%);
+  width:25.5%; min-width:118px; max-width:230px;
+  background:rgba(255,255,255,.045); border:1px solid var(--line-dark);
+  border-radius:12px; padding:.85rem .9rem .8rem;
+  transition:transform .3s ease, background .3s ease, border-color .3s ease;
   z-index:2;
 }
 .tech-node:hover{
   background:rgba(23,168,147,.16); border-color:rgba(23,168,147,.55);
-  transform:translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.06);
+  transform:translate(-50%,-50%) scale(1.07) rotate(-1.4deg);
 }
-.tech-node h4{font-size:.82rem; color:#6fe3cd; font-family:var(--font-mono); font-weight:500; margin-bottom:.55rem; letter-spacing:.01em;}
-.tech-chips{display:flex; flex-wrap:wrap; gap:.35rem;}
+.tech-node:nth-of-type(even):hover{transform:translate(-50%,-50%) scale(1.07) rotate(1.4deg);}
+.tech-node-badge{
+  position:absolute; top:-10px; left:-10px;
+  width:22px; height:22px; border-radius:50%;
+  background:linear-gradient(135deg,var(--teal-deep),var(--teal));
+  color:#fff; font-family:var(--font-mono); font-weight:700; font-size:.68rem;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 10px -2px rgba(0,0,0,.5);
+}
+.tech-node h4{font-size:clamp(.68rem,1.55vmin,.82rem); color:#6fe3cd; font-family:var(--font-mono); font-weight:500; margin-bottom:.5rem; letter-spacing:.01em;}
+.tech-chips{display:flex; flex-wrap:wrap; gap:.32rem;}
 .tech-chips span{
-  font-size:.76rem; color:#e7f3f0; background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.14); border-radius:6px; padding:.22rem .5rem;
+  font-size:clamp(.64rem,1.4vmin,.76rem); color:#e7f3f0; background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14); border-radius:6px; padding:.2rem .46rem;
+  white-space:nowrap;
 }
+
 @media (max-width:900px){
-  .tech-orbit-wrap{height:auto;}
-  .tech-orbit-lines{display:none;}
-  .tech-hub{position:static; transform:none; margin:0 auto 1rem; width:110px; height:110px; font-size:.8rem;}
-  .tech-node{position:static; transform:none !important; width:100%; margin-bottom:.7rem;}
+  .tech-orbit-wrap{width:100%; max-width:none; height:auto; max-height:none; aspect-ratio:auto; margin-top:1.2rem;}
+  .tech-orbit-lines, .orbit-ring, .orbit-sweep{display:none;}
+  .tech-hub{position:static; transform:none; width:110px; height:110px; aspect-ratio:auto; margin:0 auto 1rem; font-size:.85rem;}
+  .tech-node{position:static; top:auto; left:auto; transform:none !important; width:100%; max-width:none; margin-bottom:.7rem;}
   .tech-node:hover{transform:none !important;}
+  .tech-node-badge{top:-8px; left:-8px;}
 }
+
 
 /* =========================================================
    DIVIDER SLIDE (Introduction Générale)
@@ -752,11 +853,290 @@ ul{margin:0; padding:0; list-style:none;}
   .flow{flex-direction:column;}
   .flow-arrow{transform:rotate(90deg); align-self:center;}
 }
+
+/* =========================================================
+   FX — effets visuels (halo, balayage, ripple, lueurs)
+   Correctif majeur : le halo et les orbes étaient masqués
+   par le voile .slide::before (z-index 2). On les remonte.
+========================================================= */
+
+/* ---- 1. HALO CURSEUR : au-dessus du contenu, sur TOUTES les diapos ---- */
+.cursor-spot{
+  z-index:70 !important;
+  width:620px; height:620px;
+  margin-left:-310px; margin-top:-310px;
+  mix-blend-mode:screen;
+  background:radial-gradient(circle,
+    rgba(23,168,147,.30) 0%,
+    rgba(23,168,147,.13) 35%,
+    transparent 70%);
+  opacity:0;
+  transition:opacity .35s ease;
+}
+.cursor-spot.spot-visible{opacity:1;}
+/* sur fond clair : halo ambré, en mode multiply pour rester lisible */
+.cursor-spot.spot-light{
+  mix-blend-mode:multiply;
+  background:radial-gradient(circle,
+    rgba(23,168,147,.22) 0%,
+    rgba(226,115,74,.10) 40%,
+    transparent 70%);
+}
+/* noyau net qui suit le curseur */
+.cursor-core{
+  position:fixed; z-index:71; pointer-events:none;
+  width:26px; height:26px; left:0; top:0; margin:-13px 0 0 -13px;
+  border-radius:50%; border:1px solid rgba(23,168,147,.55);
+  opacity:0; transition:opacity .3s ease, width .2s ease, height .2s ease;
+  will-change:transform;
+}
+.cursor-core.core-on{opacity:.9;}
+.cursor-core.core-grow{width:54px; height:54px; margin:-27px 0 0 -27px; border-color:rgba(23,168,147,.9);}
+
+/* ---- 2. ORBES AMBIANTS : remontés au-dessus du voile ---- */
+.ambient-glow{z-index:1 !important; mix-blend-mode:screen;}
+.slide.light ~ .ambient-glow{mix-blend-mode:multiply;}
+.ambient-glow .orb{opacity:.28; will-change:transform;}
+
+/* ---- 3. BALAYAGE (shine sweep) sur les cartes au survol ---- */
+.card, .toc-card, .quote-card, .formula-card, .uph-step,
+.flow-step, .layer-band, .diagram-frame, .ctx-card,
+.deploy-node, .goal-step, .pipe-step{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+/* .tech-node garde son position:absolute (mise en cercle) défini plus haut ;
+   on ne reprend ici que ce qui est nécessaire à l'effet de balayage lumineux. */
+.tech-node{
+  overflow:hidden;
+  isolation:isolate;
+}
+.card::after, .toc-card::after, .quote-card::after, .formula-card::after,
+.uph-step::after, .flow-step::after, .layer-band::after, .diagram-frame::after,
+.ctx-card::after, .tech-node::after, .deploy-node::after, .goal-step::after,
+.pipe-step::after{
+  content:'';
+  position:absolute; inset:0; z-index:3;
+  pointer-events:none;
+  background:linear-gradient(115deg,
+    transparent 38%,
+    rgba(255,255,255,.55) 50%,
+    transparent 62%);
+  transform:translateX(-120%);
+  transition:transform .85s cubic-bezier(.22,.61,.36,1);
+}
+.slide.dark .card::after, .slide.dark .toc-card::after,
+.slide.dark .quote-card::after, .slide.dark .formula-card::after,
+.slide.dark .uph-step::after, .slide.dark .flow-step::after,
+.slide.dark .layer-band::after, .slide.dark .diagram-frame::after,
+.slide.dark .ctx-card::after, .slide.dark .tech-node::after,
+.slide.dark .deploy-node::after, .slide.dark .goal-step::after,
+.slide.dark .pipe-step::after{
+  background:linear-gradient(115deg,
+    transparent 38%,
+    rgba(127,232,212,.34) 50%,
+    transparent 62%);
+}
+.card:hover::after, .toc-card:hover::after, .quote-card:hover::after,
+.formula-card:hover::after, .uph-step:hover::after, .flow-step:hover::after,
+.layer-band:hover::after, .diagram-frame:hover::after, .ctx-card:hover::after,
+.tech-node:hover::after, .deploy-node:hover::after, .goal-step:hover::after,
+.pipe-step:hover::after{
+  transform:translateX(120%);
+}
+
+/* ---- 4. BALAYAGE AUTOMATIQUE du titre de la diapo active ---- */
+@supports (-webkit-background-clip:text) or (background-clip:text){
+  .slide.light.active .h1{
+    background-image:linear-gradient(100deg,
+      #0a2036 0%, #0a2036 41%,
+      #17a893 50%,
+      #0a2036 59%, #0a2036 100%);
+    background-size:240% 100%;
+    background-position:190% 0;
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:title-sweep 2.4s cubic-bezier(.22,.61,.36,1) .4s 1 forwards;
+  }
+  .slide.dark.active .h1{
+    background-image:linear-gradient(100deg,
+      #ffffff 0%, #ffffff 41%,
+      #7fe8d4 50%,
+      #ffffff 59%, #ffffff 100%);
+    background-size:240% 100%;
+    background-position:190% 0;
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:title-sweep 2.4s cubic-bezier(.22,.61,.36,1) .4s 1 forwards;
+  }
+}
+@keyframes title-sweep{
+  0%{background-position:190% 0;}
+  100%{background-position:-70% 0;}
+}
+
+/* ---- 5. BARRE DE PROGRESSION : reflet qui glisse en continu ---- */
+.progress-fill{position:relative; overflow:hidden;}
+.progress-fill::after{
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg,
+    transparent 0%, rgba(255,255,255,.85) 50%, transparent 100%);
+  transform:translateX(-100%);
+  animation:bar-shine 2.8s ease-in-out infinite;
+}
+@keyframes bar-shine{
+  0%{transform:translateX(-100%);}
+  55%,100%{transform:translateX(220%);}
+}
+
+/* ---- 6. BALAYAGE DE TRANSITION entre diapos (rideau lumineux) ---- */
+.slide-sweep{
+  position:fixed; inset:0; z-index:65; pointer-events:none;
+  opacity:0;
+  background:linear-gradient(105deg,
+    transparent 0%,
+    rgba(23,168,147,.05) 40%,
+    rgba(127,232,212,.42) 50%,
+    rgba(23,168,147,.05) 60%,
+    transparent 100%);
+  transform:translateX(-110%);
+}
+.slide-sweep.sweeping{
+  animation:deck-sweep .72s cubic-bezier(.22,.61,.36,1) 1;
+}
+.slide-sweep.sweeping-back{
+  animation:deck-sweep-back .72s cubic-bezier(.22,.61,.36,1) 1;
+}
+@keyframes deck-sweep{
+  0%{opacity:0; transform:translateX(-110%);}
+  18%{opacity:1;}
+  100%{opacity:0; transform:translateX(110%);}
+}
+@keyframes deck-sweep-back{
+  0%{opacity:0; transform:translateX(110%);}
+  18%{opacity:1;}
+  100%{opacity:0; transform:translateX(-110%);}
+}
+
+/* ---- 7. RIPPLE (onde) au clic sur boutons et cartes ---- */
+.fx-ripple{
+  position:absolute; border-radius:50%;
+  pointer-events:none; z-index:4;
+  background:radial-gradient(circle, rgba(23,168,147,.45) 0%, rgba(23,168,147,0) 70%);
+  transform:translate(-50%,-50%) scale(0);
+  animation:ripple-out .62s ease-out forwards;
+}
+@keyframes ripple-out{
+  to{transform:translate(-50%,-50%) scale(1); opacity:0;}
+}
+
+/* ---- 8. LUEUR DE BORD qui tourne sur les cartes mises en avant ---- */
+.card:hover, .formula-card:hover, .quote-card:hover{
+  box-shadow:
+    0 18px 40px -22px rgba(10,32,54,.45),
+    0 0 0 1px rgba(23,168,147,.35),
+    0 0 26px -6px rgba(23,168,147,.35);
+}
+.slide.dark .card:hover{
+  box-shadow:
+    0 18px 40px -20px rgba(0,0,0,.6),
+    0 0 0 1px rgba(127,232,212,.4),
+    0 0 30px -6px rgba(23,168,147,.5);
+}
+
+/* ---- 9. REVEAL des .build-step avec un liseré lumineux au moment d'apparaître ---- */
+.build-step.is-in{
+  animation:step-flash .7s ease-out 1;
+}
+@keyframes step-flash{
+  0%{box-shadow:0 0 0 0 rgba(23,168,147,.55);}
+  100%{box-shadow:0 0 0 14px rgba(23,168,147,0);}
+}
+
+/* ---- 10. SCAN-LINE sur les diagrammes UML à leur apparition ---- */
+.diagram-frame::before{
+  content:''; position:absolute; left:0; right:0; top:0; height:34%;
+  z-index:3; pointer-events:none; opacity:0;
+  background:linear-gradient(180deg,
+    transparent 0%, rgba(23,168,147,.20) 55%, rgba(127,232,212,.75) 100%);
+}
+.diagram-frame.is-in::before{
+  animation:scan-down 1.5s cubic-bezier(.22,.61,.36,1) .15s 1;
+}
+@keyframes scan-down{
+  0%{opacity:0; transform:translateY(-120%);}
+  20%{opacity:1;}
+  100%{opacity:0; transform:translateY(320%);}
+}
+
+/* ---- 11. BOUTONS : lueur magnétique + balayage ---- */
+.ctrl-btn, .icon-btn, .arrow-btn, .menu-item{
+  position:relative; overflow:hidden;
+  transition:background .2s ease, transform .18s ease, box-shadow .25s ease;
+}
+.ctrl-btn::after, .icon-btn::after, .menu-item::after{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.4) 50%, transparent 60%);
+  transform:translateX(-130%);
+  transition:transform .6s ease;
+}
+.ctrl-btn:hover::after, .icon-btn:hover::after, .menu-item:hover::after{
+  transform:translateX(130%);
+}
+.ctrl-btn:hover, .icon-btn:hover{
+  box-shadow:0 0 20px -4px rgba(23,168,147,.7);
+}
+
+/* ---- 12. PUCES ET NUMÉROS : pulsation douce sur la diapo active ---- */
+.slide.active .icon-circle, .slide.active .icon-hex{
+  animation:soft-pulse 3.4s ease-in-out infinite;
+}
+@keyframes soft-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(23,168,147,.0);}
+  50%{box-shadow:0 0 0 7px rgba(23,168,147,.10);}
+}
+
+/* ---- 13. ACCESSIBILITÉ : on coupe tout si l'utilisateur le demande ---- */
+@media (prefers-reduced-motion: reduce){
+  .cursor-spot, .cursor-core, .slide-sweep, .fx-ripple{display:none !important;}
+  .slide.light.active .h1, .slide.dark.active .h1{
+    -webkit-text-fill-color:currentColor !important;
+    background-image:none !important;
+    animation:none !important;
+  }
+  .progress-fill::after,
+  .build-step.is-in, .diagram-frame.is-in::before,
+  .slide.active .icon-circle, .slide.active .icon-hex{
+    animation:none !important;
+  }
+  .card::after, .toc-card::after, .quote-card::after,
+  .formula-card::after, .diagram-frame::after{display:none !important;}
+}
+
+
+/* --- Diapo « Introduction générale » : tenir dans la hauteur d'écran --- */
+.goal-steps{margin-top:1.9rem;}
+@media (max-height:860px){
+  .goal-steps{margin-top:1.3rem; gap:1rem;}
+  .goal-step{padding:1.15rem 1.1rem 1rem;}
+  .goal-num{width:38px; height:38px; font-size:.9rem; margin-bottom:.7rem;}
+  .goal-step h4{font-size:.98rem;}
+  .goal-step p{font-size:.82rem;}
+  .goal-steps::before{top:26px;}
+}
+
+/* --- Diapo « Langages, outils & technologies » : orbite mise à l'échelle --- */
+
 </style>
 </head>
 <body>
 
-<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+<div class="ambient-glow" aria-hidden="true"><span class="orb orb-a"></span><span class="orb orb-b"></span></div>
+<div class="cursor-spot" id="cursorSpot" aria-hidden="true"></div>
+<div class="cursor-core" id="cursorCore" aria-hidden="true"></div>
+<div class="slide-sweep" id="slideSweep" aria-hidden="true"></div>
+<div class="progress-track"><div class="progress-fill" id="progressFill"><span class="progress-tip"></span></div></div>
 
 <div class="top-right-menu">
   <button class="icon-btn" id="menuToggle" aria-label="Ouvrir le menu des sections" title="Menu des sections">
@@ -767,7 +1147,7 @@ ul{margin:0; padding:0; list-style:none;}
 <main class="deck" id="deck">
 
   <!-- 0 — COUVERTURE -->
-  <section class="slide dark cover active" data-title="Couverture">
+  <section data-anim="scale-in" class="slide dark cover active" data-title="Couverture">
     <div class="cover-bg" aria-hidden="true">
       <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
         <g id="netGroup"></g>
@@ -789,10 +1169,10 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 1 — SOMMAIRE -->
-  <section class="slide dark" data-title="Sommaire">
+  <section data-anim="slide-left" class="slide dark" data-title="Sommaire">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Sommaire</p>
-      <h2 class="h1 reveal" style="color:#fff;">Une progression en quatre chapitres, de <span style="color:var(--teal);">l'état de l'art</span> jusqu'au <span style="color:var(--teal);">déploiement</span></h2>
+      <h2 class="h1 reveal" style="color:#fff;">Une progression en quatre chapitres, de l'état de l'art jusqu'au déploiement</h2>
       <div class="grid toc-grid">
         <div class="toc-card build-step" data-jump="chap1">
           <div class="toc-card-photo" style="background-image:url('images/slide1.1.png');"></div>
@@ -855,11 +1235,11 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 2 — INTRODUCTION GENERALE (divider) -->
-  <section class="slide dark" data-title="Introduction générale">
+  <section data-anim="fade-up" class="slide dark" data-title="Introduction générale">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Introduction générale</p>
-      <h1 class="h1 reveal" style="color:#fff; white-space:nowrap; font-size:clamp(1.4rem,2.3vw,2.05rem);">Poser le contexte, la problématique et la trame du mémoire</h1>
-      <p class="lede reveal" style="max-width:70ch;">Avant d'entrer dans le détail des quatre chapitres, cette introduction générale situe le sujet : la place des technologies de l'information en santé, la situation propre au CLCC-DBK, et la problématique qui a guidé l'ensemble de ce travail.</p>
+      <h1 class="h1 reveal" style="color:#fff; font-size:clamp(1.35rem,2.5vw,2.05rem); max-width:26ch;">Poser le contexte, la problématique et la trame du mémoire</h1>
+      <p class="lede reveal" style="max-width:66ch; margin-top:.85rem;">Avant d'entrer dans le détail des quatre chapitres, cette introduction générale situe le sujet : la place des technologies de l'information en santé, la situation propre au CLCC-DBK, et la problématique qui a guidé l'ensemble de ce travail.</p>
       <div class="goal-steps">
         <div class="goal-step build-step">
           <div class="goal-num">01</div>
@@ -881,7 +1261,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 2b — CONTEXTE & PROBLEMATIQUE -->
-  <section class="slide light" data-title="Contexte &amp; problématique" data-chapter-label="Introduction générale">
+  <section data-anim="blur-in" class="slide light" data-title="Contexte &amp; problématique" data-chapter-label="Introduction générale">
     <div class="slide-inner grid grid-2" style="align-items:center; gap:3rem;">
       <div>
         <p class="kicker reveal"><span class="dot"></span>Introduction générale</p>
@@ -907,7 +1287,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 3 — CHAPITRE I : circuit du médicament -->
-  <section class="slide light" id="chap1" data-title="Le cancer &amp; le circuit du médicament">
+  <section data-anim="flip-in" class="slide light" id="chap1" data-title="Le cancer &amp; le circuit du médicament">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre I · Revue de littérature</p>
       <h1 class="h1 reveal" style="">Du cancer au circuit du médicament en oncologie</h1>
@@ -949,7 +1329,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 4a — CHAPITRE I : SIH définition -->
-  <section class="slide dark" data-title="Les systèmes d'information hospitaliers">
+  <section data-anim="slide-right" class="slide dark" data-title="Les systèmes d'information hospitaliers">
     <div class="slide-inner grid grid-2" style="gap:3rem; align-items:center;">
       <div class="reveal">
         <p class="kicker"><span class="dot"></span>Chapitre I · Revue de littérature</p>
@@ -965,7 +1345,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 4b — CHAPITRE I : architecture en couches du SIH -->
-  <section class="slide light" data-title="Architecture en couches du SIH">
+  <section data-anim="fade-down" class="slide light" data-title="Architecture en couches du SIH">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre I · Revue de littérature</p>
       <h1 class="h1 reveal" style="">Architecture en couches du Système d'Information Hospitalier</h1>
@@ -979,7 +1359,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 4c — CHAPITRE I : modules d'un SIH -->
-  <section class="slide light" data-title="Les modules d'un SIH">
+  <section data-anim="scale-in" class="slide light" data-title="Les modules d'un SIH">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre I · Revue de littérature</p>
       <h1 class="h1 reveal" style="white-space:nowrap; font-size:clamp(1.3rem,2.15vw,1.95rem);">Les principaux modules d'un système d'information hospitalier</h1>
@@ -999,7 +1379,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 4d — CHAPITRE I : état de l'art -->
-  <section class="slide dark" data-title="État de l'art des solutions existantes">
+  <section data-anim="slide-left" class="slide dark" data-title="État de l'art des solutions existantes">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre I · Revue de littérature</p>
       <h1 class="h1 reveal" style="color:#fff; ">État de l'art des solutions existantes</h1>
@@ -1013,7 +1393,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 4e — CHAPITRE I : sécurité & cadre légal -->
-  <section class="slide light" data-title="Sécurité des données &amp; cadre légal">
+  <section data-anim="zoom-rotate" class="slide light" data-title="Sécurité des données &amp; cadre légal">
     <div class="slide-inner grid grid-2" style="gap:3rem; align-items:center;">
       <div class="reveal">
         <p class="kicker"><span class="dot"></span>Chapitre I · Revue de littérature</p>
@@ -1034,7 +1414,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 5 — CHAPITRE II : CLCC-DBK & acteurs -->
-  <section class="slide light" id="chap2" data-title="Le CLCC-DBK &amp; l'Unité Pharmaceutique">
+  <section data-anim="flip-in" class="slide light" id="chap2" data-title="Le CLCC-DBK &amp; l'Unité Pharmaceutique">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre II · Organisme d'accueil</p>
       <h1 class="h1 reveal">Le CLCC-DBK &amp; l'Unité Pharmaceutique Hospitalière</h1>
@@ -1072,7 +1452,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 6 — CHAPITRE II : étude de l'existant -->
-  <section class="slide light" data-title="Un fonctionnement encore largement manuel">
+  <section data-anim="fade-up" class="slide light" data-title="Un fonctionnement encore largement manuel">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre II · Étude de l'existant</p>
       <h1 class="h1 reveal" style="">Un fonctionnement encore largement manuel</h1>
@@ -1088,7 +1468,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 7 — CHAPITRE II : gap analysis -->
-  <section class="slide dark" data-title="Gap Analysis">
+  <section data-anim="blur-in" class="slide dark" data-title="Gap Analysis">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre II · Analyse des écarts</p>
       <h1 class="h1 reveal" style="color:#fff; ">Gap Analysis — situation actuelle vs. souhaitée</h1>
@@ -1106,7 +1486,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 8a — CHAPITRE II : problématique formelle -->
-  <section class="slide dark" data-title="Problématique">
+  <section data-anim="slide-right" class="slide dark" data-title="Problématique">
     <div class="slide-inner">
       <p class="kicker"><span class="dot"></span>Chapitre II · Étude de l'existant</p>
       <h1 class="h1 reveal" style="color:#fff; ">Problématique</h1>
@@ -1118,7 +1498,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 8b — CHAPITRE II : proposition de solution -->
-  <section class="slide light" data-title="Proposition d'une solution">
+  <section data-anim="scale-in" class="slide light" data-title="Proposition d'une solution">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre II · Proposition d'une solution</p>
       <h1 class="h1 reveal" style="">Proposition d'une solution</h1>
@@ -1127,7 +1507,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 8c — CHAPITRE II : objectifs de la solution -->
-  <section class="slide light" data-title="Objectifs de la solution">
+  <section data-anim="fade-down" class="slide light" data-title="Objectifs de la solution">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre II · Objectifs de notre solution</p>
       <h1 class="h1 reveal" style="">Objectifs de la solution</h1>
@@ -1144,7 +1524,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 8d — CHAPITRE III : démarche d'analyse -->
-  <section class="slide dark" id="chap3" data-title="Démarche d'analyse et de conception">
+  <section data-anim="flip-in" class="slide dark" id="chap3" data-title="Démarche d'analyse et de conception">
     <div class="slide-inner">
       <p class="kicker"><span class="dot"></span>Chapitre III · Analyse &amp; conception</p>
       <h1 class="h1 reveal" style="color:#fff; ">Démarche d'analyse et de conception</h1>
@@ -1159,7 +1539,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 9 — CHAPITRE III : acteurs du système -->
-  <section class="slide light" data-title="Les acteurs du système">
+  <section data-anim="slide-left" class="slide light" data-title="Les acteurs du système">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre III · Analyse &amp; conception</p>
       <h1 class="h1 reveal" style="">Les acteurs du système</h1>
@@ -1173,7 +1553,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 9b — CHAPITRE III : diagramme de cas d'utilisation -->
-  <section class="slide dark" data-title="Diagramme de cas d'utilisation">
+  <section data-anim="zoom-rotate" class="slide dark" data-title="Diagramme de cas d'utilisation">
     <div class="slide-inner">
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
@@ -1184,13 +1564,13 @@ ul{margin:0; padding:0; list-style:none;}
         <span class="fig-tag">Figure 13 — mémoire, chap. III</span>
       </div>
       <div class="diagram-frame build-step" style="margin-top:.9rem;">
-        <img id="img-cas-utilisation" alt="Diagramme de cas d'utilisation global" style="max-height:70vh;">
+        <img id="img-cas-utilisation" src="images/Diagrammeutilisation.png" alt="Diagramme de cas d'utilisation global" style="max-height:70vh;">
       </div>
     </div>
   </section>
 
   <!-- 10 — CHAPITRE III : diagramme de contexte -->
-  <section class="slide dark" data-title="Diagramme de contexte">
+  <section data-anim="fade-up" class="slide dark" data-title="Diagramme de contexte">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre III · Modélisation UML</p>
       <h1 class="h1 reveal" style="color:#fff; ">Diagramme de contexte</h1>
@@ -1206,7 +1586,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 10b — CHAPITRE III : diagramme de séquence -->
-  <section class="slide light" data-title="Diagramme de séquence">
+  <section data-anim="blur-in" class="slide light" data-title="Diagramme de séquence">
     <div class="slide-inner">
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
@@ -1217,13 +1597,13 @@ ul{margin:0; padding:0; list-style:none;}
       </div>
       <p class="lede reveal" style="margin-top:.4rem; font-size:.85rem; max-width:64ch;">Un diagramme de séquence représente l'enchaînement chronologique des messages échangés entre les objets du système pour réaliser un scénario donné.</p>
       <div class="diagram-frame build-step" style="margin-top:.9rem;">
-        <img id="img-seq-scan-ia" alt="Diagramme de séquence, ajout d'un médicament avec scan IA" style="max-height:72vh;">
+        <img id="img-seq-scan-ia" src="images/Diagrammesequence.png" alt="Diagramme de séquence, ajout d'un médicament avec scan IA" style="max-height:72vh;">
       </div>
     </div>
   </section>
 
   <!-- 10c — CHAPITRE III : diagramme d'activité -->
-  <section class="slide light" data-title="Diagramme d'activité">
+  <section data-anim="slide-right" class="slide light" data-title="Diagramme d'activité">
     <div class="slide-inner">
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
@@ -1234,13 +1614,13 @@ ul{margin:0; padding:0; list-style:none;}
       </div>
       <p class="lede reveal" style="margin-top:.4rem; font-size:.85rem; max-width:64ch;">Un diagramme d'activité modélise le déroulement d'un processus étape par étape, avec ses embranchements et ses conditions.</p>
       <div class="diagram-frame build-step" style="margin-top:.9rem;">
-        <img id="img-activite-fifo" alt="Diagramme d'activité, dispensation FIFO" style="max-height:74vh;">
+        <img id="img-activite-fifo" src="images/Diagrammeactivité.png" alt="Diagramme d'activité, dispensation FIFO" style="max-height:74vh;">
       </div>
     </div>
   </section>
 
   <!-- 10d — CHAPITRE III : diagramme de classes -->
-  <section class="slide dark" data-title="Diagramme de classes">
+  <section data-anim="scale-in" class="slide dark" data-title="Diagramme de classes">
     <div class="slide-inner">
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
@@ -1251,13 +1631,13 @@ ul{margin:0; padding:0; list-style:none;}
       </div>
       <p class="lede reveal" style="margin-top:.4rem; font-size:.85rem; max-width:64ch;">Un diagramme de classes décrit la structure statique du système : les classes, leurs attributs, leurs méthodes et les relations qui les lient.</p>
       <div class="diagram-frame build-step" style="margin-top:.8rem;">
-        <img id="img-classes" alt="Diagramme de classes" style="max-height:78vh;">
+        <img id="img-classes" src="images/Diagrammeclasse.png" alt="Diagramme de classes" style="max-height:78vh;">
       </div>
     </div>
   </section>
 
   <!-- 10e — CHAPITRE III : diagramme de composants -->
-  <section class="slide light" data-title="Diagramme de composants">
+  <section data-anim="fade-down" class="slide light" data-title="Diagramme de composants">
     <div class="slide-inner">
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
@@ -1268,14 +1648,14 @@ ul{margin:0; padding:0; list-style:none;}
       </div>
       <p class="lede reveal" style="margin-top:.4rem; font-size:.85rem; max-width:64ch;">Un diagramme de composants montre comment le logiciel est découpé en modules et comment ces modules communiquent entre eux.</p>
       <div class="diagram-frame build-step" style="margin-top:1rem;">
-        <img id="img-composants" alt="Diagramme de composants, architecture logicielle" style="max-height:64vh;">
+        <img id="img-composants" src="images/Diagrammecompossant.png" alt="Diagramme de composants, architecture logicielle" style="max-height:64vh;">
       </div>
       <p class="lede build-step" style="margin-top:.9rem; font-size:.82rem;">Quatre couches — présentation, contrôleurs, services métier et modèles Eloquent — plus les composants d'intégration IA et de persistance.</p>
     </div>
   </section>
 
   <!-- 10f — CHAPITRE III : diagramme d'état -->
-  <section class="slide light" data-title="Diagramme d'état">
+  <section data-anim="slide-left" class="slide light" data-title="Diagramme d'état">
     <div class="slide-inner">
       <div class="reveal" style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:.8rem;">
         <div>
@@ -1292,7 +1672,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 12 — CHAPITRE III : RBAC -->
-  <section class="slide dark" data-title="Sécurité — RBAC">
+  <section data-anim="zoom-rotate" class="slide dark" data-title="Sécurité — RBAC">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre III · Sécurité</p>
       <h1 class="h1 reveal" style="color:#fff; ">Contrôle d'accès basé sur les rôles (RBAC)</h1>
@@ -1308,13 +1688,15 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 13 — CHAPITRE IV : langages, outils & technologies (schéma interactif) -->
-  <section class="slide dark" id="chap4" data-title="Langages, outils &amp; technologies">
+  <section data-anim="flip-in" class="slide dark" id="chap4" data-title="Langages, outils &amp; technologies">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre IV · Réalisation</p>
       <h1 class="h1 reveal" style="color:#fff; ">Langages, outils &amp; technologies</h1>
       <p class="lede reveal">Survolez chaque catégorie pour découvrir le détail des langages, outils et technologies mobilisés pour développer l'application.</p>
       <div class="tech-orbit-wrap reveal">
         <svg class="tech-orbit-lines" viewBox="0 0 900 620" preserveAspectRatio="xMidYMid meet">
+          <circle class="orbit-ring" cx="450" cy="310" r="270"/>
+          <circle class="orbit-sweep" cx="450" cy="310" r="270"/>
           <line x1="450" y1="310" x2="450" y2="40"/>
           <line x1="450" y1="310" x2="707" y2="227"/>
           <line x1="450" y1="310" x2="609" y2="528"/>
@@ -1322,23 +1704,28 @@ ul{margin:0; padding:0; list-style:none;}
           <line x1="450" y1="310" x2="193" y2="227"/>
         </svg>
         <div class="tech-hub">Stack<br>technique</div>
-        <div class="tech-node" style="--x:0px; --y:-270px;">
+        <div class="tech-node" style="--xp:50%; --yp:6.45%;">
+          <span class="tech-node-badge">1</span>
           <h4>Technologies</h4>
           <div class="tech-chips"><span>Laravel 12</span><span>Tailwind CSS</span><span>FastAPI</span></div>
         </div>
-        <div class="tech-node" style="--x:257px; --y:-83px;">
+        <div class="tech-node" style="--xp:78.56%; --yp:36.61%;">
+          <span class="tech-node-badge">2</span>
           <h4>Langages</h4>
           <div class="tech-chips"><span>PHP</span><span>JavaScript</span><span>HTML5</span><span>CSS3</span><span>Python</span></div>
         </div>
-        <div class="tech-node" style="--x:159px; --y:218px;">
+        <div class="tech-node" style="--xp:67.67%; --yp:85.16%;">
+          <span class="tech-node-badge">3</span>
           <h4>Base de données</h4>
           <div class="tech-chips"><span>MySQL 8.0</span></div>
         </div>
-        <div class="tech-node" style="--x:-159px; --y:218px;">
+        <div class="tech-node" style="--xp:32.33%; --yp:85.16%;">
+          <span class="tech-node-badge">4</span>
           <h4>IA &amp; OCR</h4>
           <div class="tech-chips"><span>CLIP</span><span>Tesseract OCR</span><span>Pyzbar</span></div>
         </div>
-        <div class="tech-node" style="--x:-257px; --y:-83px;">
+        <div class="tech-node" style="--xp:21.44%; --yp:36.61%;">
+          <span class="tech-node-badge">5</span>
           <h4>Outils</h4>
           <div class="tech-chips"><span>VS Code</span><span>Git</span><span>Composer</span><span>XAMPP</span><span>Draw.io</span></div>
         </div>
@@ -1347,7 +1734,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 13b — CHAPITRE IV : architecture logicielle -->
-  <section class="slide dark" data-title="Architecture logicielle">
+  <section data-anim="fade-up" class="slide dark" data-title="Architecture logicielle">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre IV · Réalisation</p>
       <h1 class="h1 reveal" style="color:#fff; ">Architecture logicielle</h1>
@@ -1369,7 +1756,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 14 — CHAPITRE IV : fonctionnalités clés -->
-  <section class="slide light" data-title="Fonctionnalités clés">
+  <section data-anim="blur-in" class="slide light" data-title="Fonctionnalités clés">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre IV · Fonctionnalités</p>
       <h1 class="h1 reveal" style="">Une gestion complète du circuit pharmaceutique</h1>
@@ -1385,7 +1772,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 15 — CHAPITRE IV : calcul des doses -->
-  <section class="slide light" data-title="Calcul automatique des doses">
+  <section data-anim="slide-right" class="slide light" data-title="Calcul automatique des doses">
     <div class="slide-inner grid grid-2" style="gap:3rem; align-items:start;">
       <div class="reveal">
         <p class="kicker"><span class="dot"></span>Chapitre IV · Calcul des doses</p>
@@ -1430,7 +1817,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 16 — CHAPITRE IV : module IA -->
-  <section class="slide dark" data-title="Module d'analyse intelligente">
+  <section data-anim="scale-in" class="slide dark" data-title="Module d'analyse intelligente">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Chapitre IV · Intelligence artificielle</p>
       <h1 class="h1 reveal" style="color:#fff; ">L'intelligence artificielle au service du pharmacien</h1>
@@ -1446,7 +1833,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 17 — CHAPITRE IV : détection d'anomalies -->
-  <section class="slide light" data-title="Détection d'anomalies &amp; prévision">
+  <section data-anim="fade-down" class="slide light" data-title="Détection d'anomalies &amp; prévision">
     <div class="slide-inner grid grid-2" style="gap:3rem; align-items:center;">
       <div class="reveal">
         <p class="kicker"><span class="dot"></span>Chapitre IV · Analyse statistique</p>
@@ -1467,17 +1854,17 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 18 — DEMONSTRATION VIDEO -->
-  <section class="slide dark" data-title="Démonstration vidéo">
+  <section data-anim="slide-left" class="slide dark" data-title="Démonstration vidéo">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Démonstration</p>
       <h1 class="h1 reveal" style="color:#fff; ">L'application en fonctionnement</h1>
       <p class="lede reveal">Vidéo de démonstration des fonctionnalités réelles de l'application, enregistrée sur l'environnement de travail.</p>
       <div class="video-frame reveal">
-        <video id="demoVideo" controls playsinline poster="" style="display:none;"></video>
+        <video id="demoVideo" controls playsinline poster="" src="videos/presentationapp.mp4" style="display:none;" onloadeddata="this.style.display='block'; document.getElementById('videoPlaceholder').style.display='none';"></video>
         <div class="video-placeholder" id="videoPlaceholder">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 9.5 21 7v10l-4-2.5"/></svg>
           <p class="label">[ INSÉRER LA VIDÉO DE DÉMONSTRATION ICI ]</p>
-          <p class="sub">Remplacez la source du lecteur par le fichier final (ex. <code>videos/demo.mp4</code>) dans le code, ou chargez un fichier local pour prévisualiser dès maintenant.</p>
+          <p class="sub">Le lecteur cherche automatiquement <code>videos/presentationapp.mp4</code> à côté du fichier HTML. Si ce message reste affiché, vérifiez que le dossier <code>videos/</code> et le fichier sont bien présents — ou chargez une vidéo locale en secours.</p>
           <button class="video-upload-btn" id="videoUploadBtn">Charger une vidéo locale</button>
           <input type="file" id="videoFileInput" accept="video/*" style="display:none;">
         </div>
@@ -1489,7 +1876,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 19 — DEPLOIEMENT -->
-  <section class="slide dark" data-title="Déploiement">
+  <section data-anim="zoom-rotate" class="slide dark" data-title="Déploiement">
     <div class="slide-inner grid grid-2" style="gap:3rem; align-items:center;">
       <div class="reveal">
         <p class="kicker"><span class="dot"></span>Chapitre IV · Installation &amp; déploiement</p>
@@ -1517,7 +1904,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 20 — RESULTATS / ACCUEIL -->
-  <section class="slide light" data-title="Accueil de la solution">
+  <section data-anim="fade-up" class="slide light" data-title="Accueil de la solution">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Bilan</p>
       <h1 class="h1 reveal" style="">Une solution bien accueillie par le service</h1>
@@ -1531,7 +1918,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 21 — PERSPECTIVES -->
-  <section class="slide dark" data-title="Perspectives futures">
+  <section data-anim="blur-in" class="slide dark" data-title="Perspectives futures">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Conclusion générale</p>
       <h1 class="h1 reveal" style="color:#fff; ">Perspectives futures</h1>
@@ -1550,7 +1937,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 22 — CONCLUSION GENERALE -->
-  <section class="slide light" data-title="Conclusion générale">
+  <section data-anim="slide-right" class="slide light" data-title="Conclusion générale">
     <div class="slide-inner">
       <p class="kicker reveal"><span class="dot"></span>Conclusion générale</p>
       <h1 class="h1 reveal" style="">Bilan du projet</h1>
@@ -1565,7 +1952,7 @@ ul{margin:0; padding:0; list-style:none;}
   </section>
 
   <!-- 23 — MERCI -->
-  <section class="slide dark cover" data-title="Merci">
+  <section data-anim="scale-in" class="slide dark cover" data-title="Merci">
     <div class="cover-bg" aria-hidden="true">
       <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"><g id="netGroup2"></g></svg>
     </div>
@@ -1855,19 +2242,167 @@ const B64_ETAT_MEDICAMENT = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB2wAA
   buildNetwork('netGroup', 0);
   buildNetwork('netGroup2', 50);
 
-  // ===== INJECT REAL UML DIAGRAM IMAGES (extracted from the mémoire) =====
+  // ===== Diagramme d'état : image encore intégrée (aucun fichier externe fourni) =====
   const diagramImages = {
-    'img-cas-utilisation': B64_CAS_UTILISATION,
-    'img-seq-scan-ia': B64_SEQ_SCAN_IA,
-    'img-activite-fifo': B64_ACTIVITE_FIFO,
-    'img-classes': B64_CLASSES,
-    'img-composants': B64_COMPOSANTS,
     'img-etat-medicament': B64_ETAT_MEDICAMENT
   };
   Object.keys(diagramImages).forEach(id => {
     const el = document.getElementById(id);
     if (el) el.src = diagramImages[id];
   });
+
+  // ===== halo lumineux qui suit le curseur (piloté plus bas dans le bloc FX) =====
+  const cursorSpot = document.getElementById('cursorSpot');
+
+  // ===== léger effet 3D au survol des cartes (tilt selon la position du curseur) =====
+  const tiltSelector = '.card, .uph-step, .toc-card, .quote-card, .formula-card';
+  document.addEventListener('mousemove', (e) => {
+    const el = e.target.closest ? e.target.closest(tiltSelector) : null;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `perspective(700px) rotateX(${(-py * 6).toFixed(2)}deg) rotateY(${(px * 6).toFixed(2)}deg) translateY(-4px)`;
+  });
+  document.addEventListener('mouseout', (e) => {
+    const el = e.target.closest ? e.target.closest(tiltSelector) : null;
+    if (el && !el.matches(':hover')) el.style.transform = '';
+  });
+
+
+  // =========================================================
+  // FX — interactions (halo, balayage, ripple, parallaxe)
+  // =========================================================
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- Halo curseur : s'adapte au fond clair/sombre + noyau qui grossit ----
+  const cursorCore = document.getElementById('cursorCore');
+  const orbA = document.querySelector('.orb-a');
+  const orbB = document.querySelector('.orb-b');
+  const hoverTargets = '.card, .toc-card, .quote-card, .formula-card, .uph-step, ' +
+                       '.flow-step, .layer-band, .diagram-frame, .ctrl-btn, .icon-btn, ' +
+                       '.menu-item, .tech-node, .deploy-node, .arrow-btn';
+
+  if(!reduceMotion){
+    let mx = 0, my = 0, raf = null;
+    document.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      if(raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        const active = slides[current];
+        const isDark = !!(active && active.classList.contains('dark'));
+
+        // le halo suit le curseur et reste visible partout
+        cursorSpot.style.transform = `translate(${mx}px, ${my}px)`;
+        cursorSpot.classList.add('spot-visible');
+        cursorSpot.classList.toggle('spot-light', !isDark);
+
+        // noyau net
+        cursorCore.style.transform = `translate(${mx}px, ${my}px)`;
+        cursorCore.classList.add('core-on');
+
+        // parallaxe très légère des orbes ambiants
+        const px = (mx / window.innerWidth - 0.5);
+        const py = (my / window.innerHeight - 0.5);
+        if(orbA) orbA.style.marginLeft = (px * -38) + 'px', orbA.style.marginTop = (py * -30) + 'px';
+        if(orbB) orbB.style.marginLeft = (px * 30) + 'px',  orbB.style.marginTop = (py * 24) + 'px';
+      });
+    });
+
+    document.addEventListener('mouseover', (e) => {
+      const t = e.target.closest ? e.target.closest(hoverTargets) : null;
+      cursorCore.classList.toggle('core-grow', !!t);
+    });
+
+    document.addEventListener('mouseleave', () => {
+      cursorSpot.classList.remove('spot-visible');
+      cursorCore.classList.remove('core-on');
+    });
+  }
+
+  // ---- Boutons "magnétiques" : le contenu du bouton suit légèrement le
+  // curseur pendant le survol, puis revient à sa place au repos ----
+  if(!reduceMotion){
+    const magneticTargets = document.querySelectorAll('.ctrl-btn, .icon-btn');
+    magneticTargets.forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const mx = (e.clientX - r.left - r.width / 2) * 0.35;
+        const my = (e.clientY - r.top - r.height / 2) * 0.35;
+        btn.style.transform = `translate(${mx.toFixed(1)}px, ${my.toFixed(1)}px)`;
+      });
+      btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+    });
+  }
+
+  // ---- Balayage lumineux à chaque changement de diapo ----
+  const slideSweep = document.getElementById('slideSweep');
+  function playSweep(backwards){
+    if(reduceMotion || !slideSweep) return;
+    slideSweep.classList.remove('sweeping', 'sweeping-back');
+    void slideSweep.offsetWidth; // force reflow pour relancer l'animation
+    slideSweep.classList.add(backwards ? 'sweeping-back' : 'sweeping');
+  }
+
+  // on enveloppe goTo pour déclencher le balayage dans le bon sens
+  const _goTo = goTo;
+  goTo = function(index, fresh){
+    const backwards = index < current;
+    if(index !== current && index >= 0 && index < total) playSweep(backwards);
+    return _goTo(index, fresh);
+  };
+
+  // ---- Ripple au clic (boutons, cartes, éléments interactifs) ----
+  if(!reduceMotion){
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest ? e.target.closest(hoverTargets) : null;
+      if(!el) return;
+      const r = el.getBoundingClientRect();
+      const size = Math.max(r.width, r.height) * 2.2;
+      const ink = document.createElement('span');
+      ink.className = 'fx-ripple';
+      ink.style.width = ink.style.height = size + 'px';
+      ink.style.left = (e.clientX - r.left) + 'px';
+      ink.style.top  = (e.clientY - r.top) + 'px';
+      const prevPos = getComputedStyle(el).position;
+      if(prevPos === 'static') el.style.position = 'relative';
+      el.appendChild(ink);
+      setTimeout(() => ink.remove(), 650);
+    });
+  }
+
+  // ---- Compteurs : les nombres montent quand la diapo devient active ----
+  function animateCounters(slide){
+    if(reduceMotion) return;
+    slide.querySelectorAll('.num, .n, .val, .pipe-num, .goal-num').forEach(el => {
+      const raw = el.textContent.trim();
+      const m = raw.match(/^([^\d]*)(\d+(?:[.,]\d+)?)(.*)$/);
+      if(!m) return;
+      const prefix = m[1], target = parseFloat(m[2].replace(',', '.')), suffix = m[3];
+      const decimals = (m[2].split(/[.,]/)[1] || '').length;
+      if(!isFinite(target) || target > 100000) return;
+      const start = performance.now(), dur = 900;
+      function tick(now){
+        const p = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const v = (target * eased).toFixed(decimals).replace('.', m[2].includes(',') ? ',' : '.');
+        el.textContent = prefix + v + suffix;
+        if(p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  // on branche l'animation des compteurs sur chaque changement de diapo
+  const _goTo2 = goTo;
+  goTo = function(index, fresh){
+    const res = _goTo2(index, fresh);
+    const slide = slides[current];
+    if(slide) setTimeout(() => animateCounters(slide), 260);
+    return res;
+  };
+
 
   // init
   window.__goTo = goTo; // exposed for QA/testing tooling
